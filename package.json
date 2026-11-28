@@ -1,0 +1,1 @@
+{"name":"profit-reaper-site","version":"1.0.0","private":true,"main":"server2.js","scripts":{"start":"node server2.js"},"engines":{"node":">=18"},"dependencies":{"ws":"^8.18.0"}}
