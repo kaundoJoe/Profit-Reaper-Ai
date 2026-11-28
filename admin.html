@@ -1,0 +1,12 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin - Profit Reaper</title><style>body{font-family:Arial;background:#0a0a0a;color:#fff;padding:20px}.card{background:#1a1a1a;padding:20px;border-radius:15px;max-width:600px;margin:15px auto}button{background:#00e676;color:#000;padding:10px;border:none;border-radius:8px;font-weight:bold;margin:5px}table{width:100%;font-size:13px}.box{background:#000;padding:12px;border-radius:10px;text-align:left}</style></head><body>
+<h1 style="text-align:center">👑 ADMIN PANEL</h1>
+<div class="card"><h3>Users (<span id="ucount">0</span>)</h3><div id="users" class="box">Loading...</div></div>
+<div class="card"><h3>License Keys</h3><div id="lics" class="box">Loading...</div></div>
+<div class="card"><h3>Settings</h3>Win Rate: <input id="win" type="number" value="72"> Interval: <input id="int" type="number" value="5"><button onclick="saveSettings()">Save Settings</button><p id="smsg"></p></div>
+<div class="card"><button onclick="logout()" style="background:#ff5252;color:#fff">Logout Admin</button></div>
+<script>
+async function load(){let r=await fetch('/api/admin/data');let j=await r.json();if(!j.ok){location.href='/admin-login.html';return}ucount.innerText=j.users.length;users.innerHTML=j.users.map(u=>u.name+' - '+u.email+' - '+u.created.slice(0,10)).join('<br>')||'No users';lics.innerHTML=j.licenses.map(l=>'<b>'+l.key+'</b> - '+l.email+' - '+l.plan+' - <b>'+l.status+'</b> '+(l.status!=='active'?'<button onclick="activate(\''+l.key+'\')">Activate</button>':'')).join('<hr>')||'No keys';win.value=j.settings.winRate;int.value=j.settings.interval}
+async function activate(key){let r=await fetch('/api/admin/activate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key})});let j=await r.json();alert(j.ok?'Activated '+key:j.error);load()}
+async function saveSettings(){let r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({winRate:parseInt(win.value),interval:parseInt(int.value)})});let j=await r.json();smsg.innerText=j.ok?'Saved':'Failed'}
+async function logout(){await fetch('/api/admin/logout',{method:'POST'});location.href='/admin-login.html'}load();
+</script></body></html>
